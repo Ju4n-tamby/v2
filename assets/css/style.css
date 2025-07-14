@@ -1,0 +1,8 @@
+.element:hover {
+  box-shadow: 0 4px 16px rgba(0, 128, 0, 0.15);
+  transform: translateY(-4px) scale(1.03);
+  border-color: #198754;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+

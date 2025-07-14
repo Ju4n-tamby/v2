@@ -1,0 +1,138 @@
+<?php
+require("../inc/function.php");
+
+if (!isset($_SESSION["id"])) {
+  header('Location: login.php');
+  exit();
+}
+
+$membre = getMembreParId($_SESSION["id"]);
+if (!$membre) {
+  header('Location: login.php');
+  exit();
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['filtre'] != "") {
+  $id_categorie = $_POST['filtre'];
+  if ($id_categorie) {
+    $listeObjets = getObjetsParCategories($id_categorie);
+  }
+} else {
+  $listeObjets = getAllObjets();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Objets</title>
+  <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../assets/css/style.css" rel="stylesheet" />
+  <script src="../assets/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="../assets/bootstrap-icons/font/bootstrap-icons.css" />
+</head>
+
+<body class="bg-light">
+
+  <?php include('../inc/header.php') ?>
+
+  <nav class="container rounded shadow-sm" style="background: linear-gradient(90deg, #e0ffe0 0%, #f0fff0 100%);">
+    <h1 class="fw-bold fs-2 text-dark">Ajouter un nouvel element : </h1>
+
+    <form action="../pages/ajouter_objet.php" method="post" enctype="multipart/form-data" class="row g-2 align-items-center mb-4">
+      <div class="col-md-3">
+        <input type="text" name="nom_objet" class="form-control border-dark" placeholder="Nom de l'objet" required>
+      </div>
+      <div class="col-md-3">
+        <select name="id_categorie" class="form-select border-dark" required>
+          <option value="">Catégorie</option>
+          <?php
+          $categories = getAllCategories();
+          foreach ($categories as $categorie) {
+            echo '<option value="' . $categorie['id_categorie'] . '">' . $categorie['nom_categorie'] . '</option>';
+          }
+          ?>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="file" name="image[]" class="form-control border-dark" accept="image/*" multiple>
+        <span class="text-muted">Vous pouvez sélectionner plusieurs images</span>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-dark">
+          <i class="bi bi-plus-circle"></i> Ajouter
+        </button>
+      </div>
+    </form>
+
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow-sm mb-4" style="background: linear-gradient(90deg, #f8f9fa 0%, #e0ffe0 100%);">
+          <div class="card-body">
+            <h2 class="card-title mb-4 text-dark"><i class="bi bi-list-ul"></i> Liste des Objets</h2>
+
+            <form action="" method="post" class="row g-2 align-items-center mb-4">
+              <div class="col-auto">
+                <select name="filtre" class="form-select border-dark">
+                  <option value="">Tous</option>
+                  <?php
+                  $categories = getAllCategories();
+                  foreach ($categories as $categorie) { ?>
+                    <option value="<?php echo $categorie['id_categorie']; ?>"><?php echo $categorie['nom_categorie']; ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn btn-dark">
+                  <i class="bi bi-funnel"></i> Filtrer
+                </button>
+              </div>
+            </form>
+
+            <section class="d-flex flex-wrap gap-3">
+              <?php foreach ($listeObjets as $objet) { ?>
+                <article class="bg-white rounded shadow-sm p-3 flex-grow-1 element" style="min-width:250px; max-width:350px;">
+
+                  <figure class="bg-dark container-fluid shadow-lg d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px;">
+                    <i class="bi bi-box-seam text-danger" style="font-size: 3rem;"></i>
+                  </figure>
+
+                  <h5 class="text-dark mb-2"><?php echo $objet['nom_objet']; ?></h5>
+                  <p class="mb-1"><strong style="color:#198754;">Catégorie :</strong> <span style="color:#0d6efd;"><?php echo $objet['nom_categorie']; ?></span></p>
+                  <p class="mb-1"><strong style="color:#198754;">Propriétaire :</strong> <span style="color:#fd7e14;"><?php echo $objet['nom']; ?></span></p>
+                  <p class="mb-0">
+                    <strong style="color:#198754;">Date retour :</strong>
+                    <?php
+                    $emprunt = verifier_emprunt_en_cours($objet['id_objet']);
+                    if ($emprunt) {
+                      echo '<span class="text-danger fw-bold">' . $emprunt['date_retour'] . '</span>';
+                    } else {
+                      echo '<span class="text-muted">Aucun emprunt en cours</span>';
+                    }
+                    ?>
+                  </p>
+                </article>
+              <?php } ?>
+              <?php if (empty($listeObjets)) { ?>
+                <div class="bg-white rounded shadow-sm p-3 text-center text-muted w-100" style="border: 2px dashed #198754;">
+                  Aucun objet trouvé.
+                </div>
+              <?php } ?>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <?php include('../inc/footer.php') ?>
+
+</body>
+
+</html>
