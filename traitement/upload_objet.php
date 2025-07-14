@@ -4,7 +4,7 @@ require("../inc/function.php");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $nom_objet = $_POST['nom_objet'];
   $id_categorie = $_POST['id_categorie'];
-  $id_membre = $_SESSION['id_membre'];
+  $id_membre = $_SESSION['id'];
   $listeImages = [];
 
   if (isset($_FILES['image']) && !empty($_FILES['image']['name'][0])) {

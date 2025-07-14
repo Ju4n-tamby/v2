@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['f
   <nav class="container rounded shadow-sm" style="background: linear-gradient(90deg, #e0ffe0 0%, #f0fff0 100%);">
     <h1 class="fw-bold fs-2 text-dark">Ajouter un nouvel element : </h1>
 
-    <form action="../pages/ajouter_objet.php" method="post" enctype="multipart/form-data" class="row g-2 align-items-center mb-4">
+    <form action="../traitement/upload_objet.php" method="post" enctype="multipart/form-data" class="row g-2 align-items-center mb-4">
       <div class="col-md-3">
         <input type="text" name="nom_objet" class="form-control border-dark" placeholder="Nom de l'objet" required>
       </div>
@@ -95,15 +95,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['f
               </div>
             </form>
 
-            <section class="d-flex flex-wrap gap-3">
+            <section class="d-flex flex-wrap gap-3 justify-content-center">
               <?php foreach ($listeObjets as $objet) { ?>
-                <article class="bg-white rounded shadow-sm p-3 flex-grow-1 element" style="min-width:250px; max-width:350px;">
+                <a href="fiche_objet.php?id_objet=<?php echo $objet['id_objet']; ?>" class="bg-white rounded shadow-sm p-3 flex-grow-1 link link-unstyled" style="min-width:250px; max-width:350px;text-decoration: none;">
+                  <article class="element" style="min-width:250px; max-width:350px;">
 
-                  <figure class="bg-dark container-fluid shadow-lg d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 10px;">
-                    <i class="bi bi-box-seam text-danger" style="font-size: 3rem;"></i>
+                  <figure class="bg-dark container-fluid shadow-lg d-flex align-items-center justify-content-center" style="height: 220px; border-radius: 10px;">
+                    <?php
+                    $images = getImage($objet['id_objet']);
+                    if (!empty($images)) {
+                    $firstImage = $images[0]['nom_image'];
+                    echo '<img src="' . getCheminImage($firstImage) . '" alt="Image" class="img-fluid w-100" style="object-fit: cover; height: 100%; border-radius: 10px;">';
+                    } else {
+                    echo '<i class="bi bi-box-seam text-danger" style="font-size: 2.5rem;"></i>';
+                    }
+                    ?>
                   </figure>
 
-                  <h5 class="text-dark mb-2"><?php echo $objet['nom_objet']; ?></h5>
+                  <h5 class="text-dark mb-2 text-truncate"><?php echo $objet['nom_objet']; ?></h5>
                   <p class="mb-1"><strong style="color:#198754;">Catégorie :</strong> <span style="color:#0d6efd;"><?php echo $objet['nom_categorie']; ?></span></p>
                   <p class="mb-1"><strong style="color:#198754;">Propriétaire :</strong> <span style="color:#fd7e14;"><?php echo $objet['nom']; ?></span></p>
                   <p class="mb-0">
@@ -111,13 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['f
                     <?php
                     $emprunt = verifier_emprunt_en_cours($objet['id_objet']);
                     if ($emprunt) {
-                      echo '<span class="text-danger fw-bold">' . $emprunt['date_retour'] . '</span>';
+                    echo '<span class="text-danger fw-bold">' . $emprunt['date_retour'] . '</span>';
                     } else {
-                      echo '<span class="text-muted">Aucun emprunt en cours</span>';
+                    echo '<span class="text-muted">Aucun emprunt en cours</span>';
                     }
                     ?>
                   </p>
-                </article>
+                  </article>
+                </a>
               <?php } ?>
               <?php if (empty($listeObjets)) { ?>
                 <div class="bg-white rounded shadow-sm p-3 text-center text-muted w-100" style="border: 2px dashed #198754;">

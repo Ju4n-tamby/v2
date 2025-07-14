@@ -121,7 +121,7 @@ function verifier_emprunt_en_cours($id_objet)
 function afficherImage($nom)
 {
   if (empty($nom)) {
-    return '<i class="bi bi-person" style="font-size: 150px;"></i>';
+    return '<i class="bi bi-box-seam text-danger" style="font-size: 3rem;"></i>';
   } else {
     $src = "../assets/image/" . htmlspecialchars($nom);
     return '<img src="' . $src . '" alt="Image" style="width:80px;height:80px;border-radius:50%">';
@@ -158,4 +158,48 @@ function getImage($id_objet)
     $images[] = $result;
   }
   return $images;
+}
+
+function getCheminImage($nom_image)
+{
+  return "../assets/image/" . htmlspecialchars($nom_image);
+}
+
+function getObjetParId($id_objet)
+{
+  $sql = "SELECT * FROM v_objet_categorie_membre WHERE id_objet='$id_objet' LIMIT 1";
+  $news_req = mysqli_query(dbconnect(), $sql);
+  if ($result = mysqli_fetch_assoc($news_req)) {
+    return $result;
+  } else {
+    return null;
+  }
+}
+
+function getHistoriqueEmprunts($id_objet)
+{
+  $sql = "SELECT * FROM emp_emprunt WHERE id_objet='$id_objet' ORDER BY date_emprunt DESC";
+  $news_req = mysqli_query(dbconnect(), $sql);
+  $emprunts = array();
+  while ($result = mysqli_fetch_assoc($news_req)) {
+    $emprunts[] = $result;
+  }
+  return $emprunts;
+}
+
+function supprimerImage($id_image)
+{
+  $sql = "DELETE FROM emp_images_objet WHERE id_image='$id_image'";
+  mysqli_query(dbconnect(), $sql);
+}
+
+function getObjetsParMembre($id_membre)
+{
+  $sql = "SELECT * FROM v_objet_categorie_membre WHERE id_membre='$id_membre' ORDER BY id_objet DESC";
+  $news_req = mysqli_query(dbconnect(), $sql);
+  $objets = array();
+  while ($result = mysqli_fetch_assoc($news_req)) {
+    $objets[] = $result;
+  }
+  return $objets;
 }
