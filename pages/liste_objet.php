@@ -18,6 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['filtre']) || isset($_
 } else {
   $listeObjets = getAllObjets();
 }
+if (isset($_POST['nombre_jours'])) {
+  $nombre_jours = $_POST['nombre_jours'];
+  $date = dateRetour($nombre_jours);
+  emprunter($id_objet, $id_membre, $nombre_jours);
+}
 
 ?>
 
@@ -99,35 +104,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['filtre']) || isset($_
 
             <section class="d-flex flex-wrap gap-3 justify-content-center">
               <?php foreach ($listeObjets as $objet) { ?>
+
                 <a href="fiche_objet.php?id_objet=<?php echo $objet['id_objet']; ?>" class="bg-white rounded shadow-sm p-3 flex-grow-1 link link-unstyled" style="min-width:250px; max-width:350px;text-decoration: none;">
                   <article class="element" style="min-width:250px; max-width:350px;">
 
-                  <figure class="bg-dark container-fluid shadow-lg d-flex align-items-center justify-content-center" style="height: 220px; border-radius: 10px;">
-                    <?php
-                    $images = getImage($objet['id_objet']);
-                    if (!empty($images)) {
-                    $firstImage = $images[0]['nom_image'];
-                    echo '<img src="' . getCheminImage($firstImage) . '" alt="Image" class="img-fluid w-100" style="object-fit: cover; height: 100%; border-radius: 10px;">';
-                    } else {
-                    echo '<i class="bi bi-box-seam text-danger" style="font-size: 2.5rem;"></i>';
-                    }
-                    ?>
-                  </figure>
+                    <figure class="bg-dark container-fluid shadow-lg d-flex align-items-center justify-content-center" style="height: 220px; border-radius: 10px;">
+                      <?php
+                      $images = getImage($objet['id_objet']);
+                      if (!empty($images)) {
+                        $firstImage = $images[0]['nom_image'];
+                        echo '<img src="' . getCheminImage($firstImage) . '" alt="Image" class="img-fluid w-100" style="object-fit: cover; height: 100%; border-radius: 10px;">';
+                      } else {
+                        echo '<i class="bi bi-box-seam text-danger" style="font-size: 2.5rem;"></i>';
+                      }
+                      ?>
+                    </figure>
 
-                  <h5 class="text-dark mb-2 text-truncate"><?php echo $objet['nom_objet']; ?></h5>
-                  <p class="mb-1"><strong style="color:#198754;">Catégorie :</strong> <span style="color:#0d6efd;"><?php echo $objet['nom_categorie']; ?></span></p>
-                  <p class="mb-1"><strong style="color:#198754;">Propriétaire :</strong> <span style="color:#fd7e14;"><?php echo $objet['nom']; ?></span></p>
-                  <p class="mb-0">
-                    <strong style="color:#198754;">Date retour :</strong>
-                    <?php
-                    $emprunt = verifier_emprunt_en_cours($objet['id_objet']);
-                    if ($emprunt) {
-                    echo '<span class="text-danger fw-bold">' . $emprunt['date_retour'] . '</span>';
-                    } else {
-                    echo '<span class="text-muted">Aucun emprunt en cours</span>';
-                    }
-                    ?>
-                  </p>
+                    <h5 class="text-dark mb-2 text-truncate"><?php echo htmlspecialchars($objet['nom_objet']); ?></h5>
+                    <p class="mb-1"><strong style="color:#198754;">Catégorie :</strong> <span style="color:#0d6efd;"><?php echo htmlspecialchars($objet['nom_categorie']); ?></span></p>
+                    <p class="mb-1"><strong style="color:#198754;">Propriétaire :</strong> <span style="color:#fd7e14;"><?php echo htmlspecialchars($objet['nom']); ?></span></p>
+                    <p class="mb-0">
+                      <strong style="color:#198754;">Date retour :</strong>
+                      <?php
+                      $emprunt = verifier_emprunt_en_cours($objet['id_objet']);
+                      if ($emprunt) {
+                        if ($emprunt['date_retour'] === null) {
+                          echo '<span class="text-warning">Inconnu</span>';
+                        } else {
+                          echo '<span class="text-danger fw-bold">' . htmlspecialchars($emprunt['date_retour']) . '</span>';
+                        }
+                      } else {
+                        echo '<span class="text-muted">Aucun emprunt en cours</span>';
+                      }
+                      ?>
+                    </p>
+                    <form action="../traitement/traitement_emprunt.php" method="get" class="mt-2">
+                      <input type="hidden" name="id_objet" value="<?php echo $objet['id_objet']; ?>">
+                      <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-box-arrow-in-right"></i> Emprunter
+                      </button>
+                    </form>
                   </article>
                 </a>
               <?php } ?>

@@ -211,3 +211,15 @@ function getObjetsParMembre($id_membre)
   }
   return $objets;
 }
+function emprunter($id_objet, $id_membre, $nombre_jours)
+{
+  $date_emprunt = date("Y-m-d H:i:s");
+  $date_retour = date("Y-m-d H:i:s", strtotime("+$nombre_jours days"));
+
+  $sql = "INSERT INTO emp_emprunt (id_objet, id_membre, date_emprunt, date_retour) VALUES ('$id_objet', '$id_membre', '$date_emprunt', '$date_retour')";
+  return mysqli_query(dbconnect(), $sql);
+}
+function dateRetour($nombre_jours)
+{
+  return date("Y-m-d H:i:s", strtotime("+$nombre_jours days"));
+}

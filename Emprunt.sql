@@ -55,7 +55,9 @@ INSERT INTO emp_membre (nom, datenaissance, genre, email, ville, mdp, image) VAL
 ('Alice Dupont', '1990-05-12', 'F', 'alice@example.com', 'Paris', 'pass123', 'alice.jpg'),
 ('Bob Martin', '1985-08-23', 'M', 'bob@example.com', 'Lyon', 'pass456', 'bob.jpg'),
 ('Claire Durand', '1992-11-30', 'F', 'claire@example.com', 'Marseille', 'pass789', 'claire.jpg'),
-('David Petit', '1988-02-17', 'M', 'david@example.com', 'Toulouse', 'pass321', 'david.jpg');
+('David Petit', '19function emprunter(){
+
+}88-02-17', 'M', 'david@example.com', 'Toulouse', 'pass321', 'david.jpg');
 ALTER TABLE emp_membre AUTO_INCREMENT = 1;
 
 -- Insertion des catégories
