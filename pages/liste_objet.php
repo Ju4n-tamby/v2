@@ -11,11 +11,10 @@ if (!$membre) {
   header('Location: login.php');
   exit();
 }
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['filtre'] != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['filtre']) || isset($_POST['nom_objet_recherche']))) {
   $id_categorie = $_POST['filtre'];
-  if ($id_categorie) {
-    $listeObjets = getObjetsParCategories($id_categorie);
-  }
+  $nom = $_POST['nom_objet_recherche'];
+  $listeObjets = getObjetsParCategories($id_categorie, $nom);
 } else {
   $listeObjets = getAllObjets();
 }
@@ -80,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['f
             <form action="" method="post" class="row g-2 align-items-center mb-4">
               <div class="col-auto">
                 <select name="filtre" class="form-select border-dark">
-                  <option value="">Tous</option>
+                  <option value="">Catégorie</option>
                   <?php
                   $categories = getAllCategories();
                   foreach ($categories as $categorie) { ?>
@@ -89,8 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['filtre']) && $_POST['f
                 </select>
               </div>
               <div class="col-auto">
+                <input type="text" name="nom_objet_recherche" class="form-control border-dark" placeholder="Nom de l'objet">
+              </div>
+              <div class="col-auto">
                 <button type="submit" class="btn btn-dark">
-                  <i class="bi bi-funnel"></i> Filtrer
+                  <i class="bi bi-funnel"></i> Rechercher
                 </button>
               </div>
             </form>

@@ -4,7 +4,7 @@ session_start();
 
 function inscrire_membre($nom, $date_naissance, $genre, $ville, $mail, $mdp, $image)
 {
-  $mysqli = new mysqli('localhost', 'root', '', 'db_s2_ETU003922');
+  $mysqli = new mysqli('localhost', 'ETU003922', 'kR6rpZRG', 'db_s2_ETU003922');
   $sql = "INSERT INTO emp_membre (nom, datenaissance, genre, ville, email, mdp, image) VALUES ('$nom', '$date_naissance', '$genre', '$ville', '$mail', '$mdp', '$image')";
   if ($mysqli->query($sql) === true) {
     $inserted_id = $mysqli->insert_id;
@@ -96,9 +96,17 @@ function getAllCategories()
   return $categories;
 }
 
-function getObjetsParCategories($id_categorie)
+function getObjetsParCategories($id_categorie, $nom)
 {
-  $sql = "SELECT * FROM v_objet_categorie_membre WHERE id_categorie='$id_categorie' GROUP BY id_objet DESC";
+  $sql = "SELECT * FROM v_objet_categorie_membre WHERE 1=1";
+  if (isset($id_categorie)) {
+    $sql .= " AND id_categorie='$id_categorie'";
+  }
+  if ($nom != "") {
+    $sql .= " AND nom_objet='$nom'";
+  }
+
+  $sql .= " ORDER BY id_objet DESC";
   $news_req = mysqli_query(dbconnect(), $sql);
   $objets = array();
   while ($result = mysqli_fetch_assoc($news_req)) {
