@@ -6,8 +6,8 @@ $user = getMembreParId($_SESSION["id"]); ?>
     <a class="navbar-brand text-white fw-bold" href="#">Emprunt_V1</a>
     <div class="d-flex align-items-center">
       <span class="text-white me-3">
-        <?= afficherImage($user['image']); ?>
-        <a href="../pages//fiche_membre.php?id_membre=<?= $_SESSION["id"] ?>"><?php echo htmlspecialchars($user['nom']); ?></a>
+        <a href="../pages/fiche_membre.php?id_membre=<?= $_SESSION["id"] ?>"><?= afficherImage($user['image']); ?></a>
+        <?php echo htmlspecialchars($user['nom']); ?>
       </span>
       <a class="btn btn-dark" href="../traitement/deconnexion.php">
         <i class="bi bi-box-arrow-right"></i> Déconnexion
