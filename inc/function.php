@@ -211,15 +211,37 @@ function getObjetsParMembre($id_membre)
   }
   return $objets;
 }
+
 function emprunter($id_objet, $id_membre, $nombre_jours)
 {
+  if (empty($id_objet) || empty($id_membre)) {
+    return false;
+  }
   $date_emprunt = date("Y-m-d H:i:s");
   $date_retour = date("Y-m-d H:i:s", strtotime("+$nombre_jours days"));
 
   $sql = "INSERT INTO emp_emprunt (id_objet, id_membre, date_emprunt, date_retour) VALUES ('$id_objet', '$id_membre', '$date_emprunt', '$date_retour')";
   return mysqli_query(dbconnect(), $sql);
 }
+
 function dateRetour($nombre_jours)
 {
   return date("Y-m-d H:i:s", strtotime("+$nombre_jours days"));
+}
+
+function genererListeEmpruntEnCours($id_membre)
+{
+  $sql = "SELECT * FROM emp_emprunt JOIN emp_objet ON emp_emprunt.id_objet = emp_objet.id_objet WHERE emp_emprunt.id_membre='$id_membre' AND (emp_emprunt.date_retour IS NULL OR emp_emprunt.date_retour > NOW()) ORDER BY emp_emprunt.date_emprunt DESC";
+  $news_req = mysqli_query(dbconnect(), $sql);
+  $emprunts = array();
+  while ($result = mysqli_fetch_assoc($news_req)) {
+    $emprunts[] = $result;
+  }
+  return $emprunts;
+}
+
+function retournerObjet($id_emprunt, $etat)
+{
+  $sql = "UPDATE emp_emprunt SET date_retour = NOW(), etat='$etat' WHERE id_emprunt = '$id_emprunt'";
+  return mysqli_query(dbconnect(), $sql);
 }

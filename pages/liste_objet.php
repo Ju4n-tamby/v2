@@ -18,11 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['filtre']) || isset($_
 } else {
   $listeObjets = getAllObjets();
 }
-if (isset($_POST['nombre_jours'])) {
-  $nombre_jours = $_POST['nombre_jours'];
-  $date = dateRetour($nombre_jours);
-  emprunter($id_objet, $id_membre, $nombre_jours);
-}
 
 ?>
 

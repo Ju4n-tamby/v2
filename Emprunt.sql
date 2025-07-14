@@ -49,6 +49,8 @@ CREATE TABLE emp_emprunt(
   FOREIGN KEY (id_membre)
   REFERENCES emp_membre(id_membre)
 );
+ALTER TABLE emp_emprunt add column etat SMALLINT;
+
 -- Insertion des membres
 ALTER TABLE emp_membre AUTO_INCREMENT = 1;
 INSERT INTO emp_membre (nom, datenaissance, genre, email, ville, mdp, image) VALUES
