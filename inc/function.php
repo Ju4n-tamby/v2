@@ -99,7 +99,7 @@ function getAllCategories()
 function getObjetsParCategories($id_categorie, $nom)
 {
   $sql = "SELECT * FROM v_objet_categorie_membre WHERE 1=1";
-  if (isset($id_categorie)) {
+  if ($id_categorie != "") {
     $sql .= " AND id_categorie='$id_categorie'";
   }
   if ($nom != "") {
